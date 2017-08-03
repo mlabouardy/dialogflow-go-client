@@ -29,14 +29,9 @@ func NewRequest(client *ApiAiClient, overridedRequestOptions RequestOptions) *Re
 		RequestMethod: overridedRequestOptions.RequestMethod,
 		Headers:       headers,
 		QueryParams:   overridedRequestOptions.QueryParams,
-		RequestBody: RequestBody{
-			Lang:      client.GetApiLang(),
-			SessionID: client.GetSessionID(),
-			Query:     overridedRequestOptions.RequestBody.Query,
-			Event:     overridedRequestOptions.RequestBody.Event,
-			Entities:  overridedRequestOptions.RequestBody.Entities,
-		},
+		RequestBody:   overridedRequestOptions.RequestBody,
 	}
+
 	return request
 }
 

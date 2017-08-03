@@ -61,7 +61,9 @@ func (client *ApiAiClient) TextRequest(query string) (QueryResponse, error) {
 			URI:           client.GetBaseUrl() + "query?v=" + client.GetApiVersion(),
 			RequestMethod: "POST",
 			RequestBody: RequestBody{
-				Query: query,
+				Query:     query,
+				Lang:      client.GetApiLang(),
+				SessionID: client.GetSessionID(),
 			},
 		},
 	)
@@ -90,6 +92,8 @@ func (client *ApiAiClient) EventRequest(eventName string, eventData map[string]s
 			URI:           client.GetBaseUrl() + "query?v=" + client.GetApiVersion(),
 			RequestMethod: "POST",
 			RequestBody: RequestBody{
+				Lang:      client.GetApiLang(),
+				SessionID: client.GetSessionID(),
 				Event: Event{
 					Name: eventName,
 					Data: eventData,
@@ -110,8 +114,8 @@ func (client *ApiAiClient) EventRequest(eventName string, eventData map[string]s
 }
 
 // Retrieves a list of all entities for the agent
-func (client *ApiAiClient) EntitiesFindAllRequest() ([]EntityResponse, error) {
-	var entityResponse []EntityResponse
+func (client *ApiAiClient) EntitiesFindAllRequest() ([]Entity, error) {
+	var entityResponse []Entity
 
 	request := NewRequest(
 		client,
@@ -134,8 +138,8 @@ func (client *ApiAiClient) EntitiesFindAllRequest() ([]EntityResponse, error) {
 }
 
 // Retrieves the specified entity
-func (client *ApiAiClient) EntitiesFindByIdRequest(eid string) ([]EntityResponse, error) {
-	var entityResponse []EntityResponse
+func (client *ApiAiClient) EntitiesFindByIdRequest(eid string) (Entity, error) {
+	var entityResponse Entity
 
 	request := NewRequest(
 		client,
@@ -156,6 +160,66 @@ func (client *ApiAiClient) EntitiesFindByIdRequest(eid string) ([]EntityResponse
 
 	return entityResponse, err
 }
+
+func (client *ApiAiClient) EntitiesCreateRequest(entity Entity) (QueryResponse, error) {
+	var queryResponse QueryResponse
+
+	request := NewRequest(
+		client,
+		RequestOptions{
+			URI:           client.GetBaseUrl() + "entities?v=" + client.GetApiVersion(),
+			RequestMethod: "POST",
+			RequestBody: RequestBody{
+				Lang:      client.GetApiLang(),
+				SessionID: client.GetSessionID(),
+				Name:      entity.Name,
+				Entries:   entity.Entries,
+			},
+		},
+	)
+
+	data, err := request.Perform()
+
+	if err != nil {
+		return queryResponse, err
+	}
+
+	err = json.Unmarshal(data, &queryResponse)
+
+	return queryResponse, err
+}
+
+/*
+func (client *ApiAiClient) EntitiesCreateEntryRequest(entry Entry) (QueryResponse, error) {
+	var queryResponse QueryResponse
+
+	request := NewRequest(
+		client,
+		RequestOptions{
+			URI:           client.GetBaseUrl() + "entities?v=" + client.GetApiVersion(),
+			RequestMethod: "POST",
+			RequestBody: RequestBody{
+				Name:    entity.Name,
+				Entries: entity.Entries,
+			},
+		},
+	)
+
+	data, err := request.Perform()
+
+	if err != nil {
+		return queryResponse, err
+	}
+
+	err = json.Unmarshal(data, &queryResponse)
+
+	return queryResponse, err
+}*/
+
+/*
+
+
+
 
 // Creates a new entity
 func (client *ApiAiClient) EntitiesCreateRequest(entityRequest EntityRequest) {
@@ -183,7 +247,7 @@ func (client *ApiAiClient) EntitiesCreateRequest(entityRequest EntityRequest) {
 	err = json.Unmarshal(data, &queryResponse)
 
 	return queryResponse, err
-}
+}*/
 
 /*
 func (client *ApiAiClient) UserEntitiesCreateRequest(entities []Entity) (error, ServerResponse) {
