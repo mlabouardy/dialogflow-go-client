@@ -233,8 +233,6 @@ func (client *ApiAiClient) EntitiesUpdateRequest(entities []Entity) (QueryRespon
 		return queryResponse, err
 	}
 
-	fmt.Println(string(data))
-
 	err = json.Unmarshal(data, &queryResponse)
 
 	return queryResponse, err
@@ -326,6 +324,352 @@ func (client *ApiAiClient) EntitiesDeleteEntriesRequest(eid string, values []str
 	)
 
 	data, err := request.Perform()
+
+	if err != nil {
+		return queryResponse, err
+	}
+
+	err = json.Unmarshal(data, &queryResponse)
+
+	return queryResponse, err
+}
+
+// Adds one or multiple user entities for a session.
+func (client *ApiAiClient) UserEntitiesCreateRequest(userEntities []UserEntity) (QueryResponse, error) {
+	var queryResponse QueryResponse
+
+	request := NewRequest(
+		client,
+		RequestOptions{
+			URI:           client.GetBaseUrl() + "userEntities?v=" + client.GetApiVersion(),
+			RequestMethod: "POST",
+			RequestBody: struct {
+				SessionID string
+				Entities  []UserEntity
+			}{
+				SessionID: client.GetSessionID(),
+				Entities:  userEntities,
+			},
+		},
+	)
+
+	data, err := request.Perform()
+
+	if err != nil {
+		return queryResponse, err
+	}
+
+	err = json.Unmarshal(data, &queryResponse)
+
+	return queryResponse, err
+}
+
+// Updates user entity specified by name
+func (client *ApiAiClient) UserEntitiesUpdateRequest(name string, userEntity UserEntity) (QueryResponse, error) {
+	var queryResponse QueryResponse
+
+	request := NewRequest(
+		client,
+		RequestOptions{
+			URI:           client.GetBaseUrl() + "userEntities/" + name + "?v=" + client.GetApiVersion(),
+			RequestMethod: "PUT",
+			RequestBody:   userEntity,
+		},
+	)
+
+	data, err := request.Perform()
+
+	if err != nil {
+		return queryResponse, err
+	}
+
+	err = json.Unmarshal(data, &queryResponse)
+
+	return queryResponse, err
+}
+
+// Gets a user entity object by name
+func (client *ApiAiClient) UserEntitiesFindByNameRequest(name string) (UserEntity, error) {
+	var userEntity UserEntity
+
+	request := NewRequest(
+		client,
+		RequestOptions{
+			URI:           client.GetBaseUrl() + "userEntities/" + name + "?v=" + client.GetApiVersion() + "&sessionId=" + client.GetSessionID(),
+			RequestMethod: "GET",
+			RequestBody:   nil,
+		},
+	)
+
+	data, err := request.Perform()
+
+	if err != nil {
+		return userEntity, err
+	}
+
+	err = json.Unmarshal(data, &userEntity)
+
+	return userEntity, err
+}
+
+// Deletes a user entity object with a specified name
+func (client *ApiAiClient) UserEntitiesDeleteByNameRequest(name string) (QueryResponse, error) {
+	var queryResponse QueryResponse
+
+	request := NewRequest(
+		client,
+		RequestOptions{
+			URI:           client.GetBaseUrl() + "userEntities/" + name + "?v=" + client.GetApiVersion() + "&sessionId=" + client.GetSessionID(),
+			RequestMethod: "DELETE",
+			RequestBody:   nil,
+		},
+	)
+
+	data, err := request.Perform()
+
+	if err != nil {
+		return queryResponse, err
+	}
+
+	err = json.Unmarshal(data, &queryResponse)
+
+	return queryResponse, err
+}
+
+// Retrieves a list of all intents for the agent
+func (client *ApiAiClient) IntentsFindAllRequest() ([]IntentAgent, error) {
+	var intents []IntentAgent
+
+	request := NewRequest(
+		client,
+		RequestOptions{
+			URI:           client.GetBaseUrl() + "intents?v=" + client.GetApiVersion(),
+			RequestMethod: "GET",
+			RequestBody:   nil,
+		},
+	)
+
+	data, err := request.Perform()
+
+	if err != nil {
+		return intents, err
+	}
+
+	err = json.Unmarshal(data, &intents)
+
+	return intents, err
+}
+
+// Retrieves the specified intent
+func (client *ApiAiClient) IntentsFindByIdRequest(id string) (Intent, error) {
+	var intent Intent
+
+	request := NewRequest(
+		client,
+		RequestOptions{
+			URI:           client.GetBaseUrl() + "intents/" + id + "?v=" + client.GetApiVersion(),
+			RequestMethod: "GET",
+			RequestBody:   nil,
+		},
+	)
+
+	data, err := request.Perform()
+
+	if err != nil {
+		return intent, err
+	}
+
+	err = json.Unmarshal(data, &intent)
+
+	return intent, err
+}
+
+// Creates a new intent
+func (client *ApiAiClient) IntentsCreateRequest(intent Intent) (QueryResponse, error) {
+	var queryResponse QueryResponse
+
+	request := NewRequest(
+		client,
+		RequestOptions{
+			URI:           client.GetBaseUrl() + "intents?v=" + client.GetApiVersion(),
+			RequestMethod: "POST",
+			RequestBody:   intent,
+		},
+	)
+
+	data, err := request.Perform()
+
+	if err != nil {
+		return queryResponse, err
+	}
+
+	err = json.Unmarshal(data, &queryResponse)
+
+	return queryResponse, err
+}
+
+// Updates the specified intent
+func (client *ApiAiClient) IntentsUpdateRequest(id string, intent Intent) (QueryResponse, error) {
+	var queryResponse QueryResponse
+
+	request := NewRequest(
+		client,
+		RequestOptions{
+			URI:           client.GetBaseUrl() + "intents/" + id + "?v=" + client.GetApiVersion(),
+			RequestMethod: "PUT",
+			RequestBody:   intent,
+		},
+	)
+
+	data, err := request.Perform()
+
+	if err != nil {
+		return queryResponse, err
+	}
+
+	err = json.Unmarshal(data, &queryResponse)
+
+	return queryResponse, err
+}
+
+// Deletes the specified intent
+func (client *ApiAiClient) IntentsDeleteRequest(id string, intent Intent) (QueryResponse, error) {
+	var queryResponse QueryResponse
+
+	request := NewRequest(
+		client,
+		RequestOptions{
+			URI:           client.GetBaseUrl() + "intents/" + id + "?v=" + client.GetApiVersion(),
+			RequestMethod: "DELETE",
+			RequestBody:   RequestBody{},
+		},
+	)
+
+	data, err := request.Perform()
+
+	if err != nil {
+		return queryResponse, err
+	}
+
+	err = json.Unmarshal(data, &queryResponse)
+
+	return queryResponse, err
+}
+
+// retrieves the list of all currently active contexts for the specified session
+func (client *ApiAiClient) ContextsFindAllRequest() ([]Context, error) {
+	var contexts []Context
+
+	request := NewRequest(
+		client,
+		RequestOptions{
+			URI:           client.GetBaseUrl() + "contexts?sessionId=" + client.GetSessionID(),
+			RequestMethod: "GET",
+			RequestBody:   nil,
+		},
+	)
+
+	data, err := request.Perform()
+
+	if err != nil {
+		return contexts, err
+	}
+
+	err = json.Unmarshal(data, &contexts)
+
+	return contexts, err
+}
+
+// Retrieves the specified context for the specified session
+func (client *ApiAiClient) ContextsFindByNameRequest(name string) (Context, error) {
+	var contexts Context
+
+	request := NewRequest(
+		client,
+		RequestOptions{
+			URI:           client.GetBaseUrl() + "contexts/" + name + "?sessionId=" + client.GetSessionID(),
+			RequestMethod: "GET",
+			RequestBody:   nil,
+		},
+	)
+
+	data, err := request.Perform()
+
+	if err != nil {
+		return contexts, err
+	}
+
+	err = json.Unmarshal(data, &contexts)
+
+	return contexts, err
+}
+
+// Adds new active contexts to the specified session
+func (client *ApiAiClient) ContextsCreateRequest(contexts []Context) (QueryResponse, error) {
+	var queryResponse QueryResponse
+
+	request := NewRequest(
+		client,
+		RequestOptions{
+			URI:           client.GetBaseUrl() + "contexts?sessionId=" + client.GetSessionID(),
+			RequestMethod: "POST",
+			RequestBody:   contexts,
+		},
+	)
+
+	data, err := request.Perform()
+
+	if err != nil {
+		return queryResponse, err
+	}
+
+	err = json.Unmarshal(data, &queryResponse)
+
+	return queryResponse, err
+}
+
+// Deletes all contexts from the specified session
+func (client *ApiAiClient) ContextsDeleteRequest() (QueryResponse, error) {
+	var queryResponse QueryResponse
+
+	request := NewRequest(
+		client,
+		RequestOptions{
+			URI:           client.GetBaseUrl() + "contexts?sessionId=" + client.GetSessionID(),
+			RequestMethod: "DELETE",
+			RequestBody:   nil,
+		},
+	)
+
+	data, err := request.Perform()
+
+	fmt.Println(string(data))
+
+	if err != nil {
+		return queryResponse, err
+	}
+
+	err = json.Unmarshal(data, &queryResponse)
+
+	return queryResponse, err
+}
+
+// Deletes the specified context from the specified session
+func (client *ApiAiClient) ContextsDeleteByNameRequest(name string) (QueryResponse, error) {
+	var queryResponse QueryResponse
+
+	request := NewRequest(
+		client,
+		RequestOptions{
+			URI:           client.GetBaseUrl() + "contexts/" + name + "?sessionId=" + client.GetSessionID(),
+			RequestMethod: "DELETE",
+			RequestBody:   nil,
+		},
+	)
+
+	data, err := request.Perform()
+
+	fmt.Println(string(data))
 
 	if err != nil {
 		return queryResponse, err

@@ -140,4 +140,76 @@ func main() {
 		log.Fatal(err)
 	}
 	fmt.Println(resp9)
+
+	userEntities := []UserEntity{
+		UserEntity{
+			Name: "city",
+			Entries: []Entry{
+				Entry{
+					Value:    "city",
+					Synonyms: []string{"electricity", "electrical", "casalablanca"},
+				},
+			},
+		},
+	}
+
+	resp10, err := client.UserEntitiesCreateRequest(userEntities)
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Println("ok")
+	fmt.Println(resp10)
+
+	resp11, err := client.UserEntitiesFindByNameRequest("city")
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Println(resp11)
+
+	resp12, err := client.IntentsFindAllRequest()
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Println(resp12)
+
+	resp13, err := client.IntentsFindByIdRequest("4505109a-8b7c-4531-b144-0191ffa2a5aa")
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Println(resp13)
+
+	resp14, err := client.ContextsFindAllRequest()
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Println(resp14)
+
+	resp15, err := client.ContextsFindByNameRequest("test_event")
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Println(resp15)
+
+	contexts := []Context{
+		Context{
+			Name:     "farwell",
+			Lifespan: 3,
+			Parameters: ContextParameter{
+				Name: "John",
+			},
+		},
+	}
+
+	resp16, err := client.ContextsCreateRequest(contexts)
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Println(resp16)
+
+	resp17, err := client.ContextsDeleteRequest()
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Println(resp17)
+
 }
