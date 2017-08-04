@@ -1,8 +1,8 @@
 package models
 
 type RequestOptions struct {
-	URI           string
-	RequestMethod string
-	RequestBody   interface{}
-	QueryParams   map[string]string
+	URI         string
+	Method      string
+	Body        interface{}
+	QueryParams map[string]string
 }

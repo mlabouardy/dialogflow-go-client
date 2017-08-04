@@ -10,11 +10,11 @@ import (
 )
 
 type Request struct {
-	URI           string
-	RequestMethod string
-	Headers       map[string]string
-	RequestBody   interface{}
-	QueryParams   map[string]string
+	URI         string
+	Method      string
+	Headers     map[string]string
+	Body        interface{}
+	QueryParams map[string]string
 }
 
 func NewRequest(client *ApiAiClient, overridedRequestOptions RequestOptions) *Request {
@@ -25,11 +25,11 @@ func NewRequest(client *ApiAiClient, overridedRequestOptions RequestOptions) *Re
 	}
 
 	request := &Request{
-		URI:           overridedRequestOptions.URI,
-		RequestMethod: overridedRequestOptions.RequestMethod,
-		Headers:       headers,
-		QueryParams:   overridedRequestOptions.QueryParams,
-		RequestBody:   overridedRequestOptions.RequestBody,
+		URI:         overridedRequestOptions.URI,
+		Method:      overridedRequestOptions.Method,
+		Headers:     headers,
+		QueryParams: overridedRequestOptions.QueryParams,
+		Body:        overridedRequestOptions.Body,
 	}
 
 	return request
@@ -39,12 +39,12 @@ func (r *Request) Perform() ([]byte, error) {
 	var data []byte
 	client := &http.Client{}
 
-	b := new(bytes.Buffer)
-	json.NewEncoder(b).Encode(r.RequestBody)
+	req, err := http.NewRequest(r.Method, r.URI, nil)
 
-	req, err := http.NewRequest(r.RequestMethod, r.URI, b)
-	if r.RequestMethod == "GET" {
-		req, err = http.NewRequest(r.RequestMethod, r.URI, nil)
+	if r.Method != "GET" {
+		b := new(bytes.Buffer)
+		json.NewEncoder(b).Encode(r.Body)
+		req, err = http.NewRequest(r.Method, r.URI, b)
 	}
 
 	for k, v := range r.Headers {

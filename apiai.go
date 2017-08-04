@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"reflect"
 
 	. "github.com/mlabouardy/apiai-go-client/models"
 	uuid "github.com/satori/go.uuid"
@@ -49,23 +50,48 @@ func NewApiAiClient(options Options) (error, *ApiAiClient) {
 	return nil, client
 }
 
-func (client *ApiAiClient) TextRequest(query string) (QueryResponse, error) {
+func queryToMap(query Query) map[string]string {
+	params := make(map[string]string)
+
+	if query.Query != "" {
+		params["query"] = query.Query
+	}
+
+	if !reflect.DeepEqual(query.E, Event{}) {
+		params["e"] = query.Event.Name
+	}
+
+	if !reflect.DeepEqual(query.Contexts, []Context{}) {
+		params["contexts"] = query.Contexts[0].Name
+	}
+
+	if !reflect.DeepEqual(query.Location, Location{}) {
+		params["latitude"] = query.Location.Latitude
+		params["longitude"] = query.Location.Longitude
+	}
+
+	params["v"] = query.V
+	params["sessionId"] = query.SessionID
+	params["lang"] = query.Lang
+
+	return params
+}
+
+// Takes natural language text and information as query parameters and returns information as JSON
+func (client *ApiAiClient) QueryFindRequest(query Query) (QueryResponse, error) {
 	var queryResponse QueryResponse
 
-	if query == "" {
-		return queryResponse, errors.New("Query should not be empty")
-	}
+	query.V = client.GetApiVersion()
+	query.Lang = client.GetApiLang()
+	query.SessionID = client.GetSessionID()
 
 	request := NewRequest(
 		client,
 		RequestOptions{
-			URI:           client.GetBaseUrl() + "query?v=" + client.GetApiVersion(),
-			RequestMethod: "POST",
-			RequestBody: RequestBody{
-				Query:     query,
-				Lang:      client.GetApiLang(),
-				SessionID: client.GetSessionID(),
-			},
+			URI:         client.GetBaseUrl() + "query",
+			Method:      "GET",
+			Body:        nil,
+			QueryParams: queryToMap(query),
 		},
 	)
 
@@ -80,26 +106,16 @@ func (client *ApiAiClient) TextRequest(query string) (QueryResponse, error) {
 	return queryResponse, err
 }
 
-func (client *ApiAiClient) EventRequest(eventName string, eventData map[string]string) (QueryResponse, error) {
+// Takes natural language text and information as JSON in the POST body and returns information as JSON
+func (client *ApiAiClient) QueryCreateRequest(query Query) (QueryResponse, error) {
 	var queryResponse QueryResponse
-
-	if eventName == "" {
-		return queryResponse, errors.New("Event name can not be empty")
-	}
 
 	request := NewRequest(
 		client,
 		RequestOptions{
-			URI:           client.GetBaseUrl() + "query?v=" + client.GetApiVersion(),
-			RequestMethod: "POST",
-			RequestBody: RequestBody{
-				Lang:      client.GetApiLang(),
-				SessionID: client.GetSessionID(),
-				Event: Event{
-					Name: eventName,
-					Data: eventData,
-				},
-			},
+			URI:    client.GetBaseUrl() + "query?v=" + client.GetApiVersion(),
+			Method: "POST",
+			Body:   query,
 		},
 	)
 
@@ -121,9 +137,9 @@ func (client *ApiAiClient) EntitiesFindAllRequest() ([]Entity, error) {
 	request := NewRequest(
 		client,
 		RequestOptions{
-			URI:           client.GetBaseUrl() + "entities?v=" + client.GetApiVersion(),
-			RequestMethod: "GET",
-			RequestBody:   RequestBody{},
+			URI:    client.GetBaseUrl() + "entities?v=" + client.GetApiVersion(),
+			Method: "GET",
+			Body:   RequestBody{},
 		},
 	)
 
@@ -145,9 +161,9 @@ func (client *ApiAiClient) EntitiesFindByIdRequest(eid string) (Entity, error) {
 	request := NewRequest(
 		client,
 		RequestOptions{
-			URI:           client.GetBaseUrl() + "entities/" + eid + "?v=" + client.GetApiVersion(),
-			RequestMethod: "GET",
-			RequestBody:   RequestBody{},
+			URI:    client.GetBaseUrl() + "entities/" + eid + "?v=" + client.GetApiVersion(),
+			Method: "GET",
+			Body:   RequestBody{},
 		},
 	)
 
@@ -168,9 +184,9 @@ func (client *ApiAiClient) EntitiesCreateRequest(entity Entity) (QueryResponse, 
 	request := NewRequest(
 		client,
 		RequestOptions{
-			URI:           client.GetBaseUrl() + "entities?v=" + client.GetApiVersion(),
-			RequestMethod: "POST",
-			RequestBody: RequestBody{
+			URI:    client.GetBaseUrl() + "entities?v=" + client.GetApiVersion(),
+			Method: "POST",
+			Body: RequestBody{
 				Lang:      client.GetApiLang(),
 				SessionID: client.GetSessionID(),
 				Name:      entity.Name,
@@ -197,9 +213,9 @@ func (client *ApiAiClient) EntitiesAddEntryRequest(eid string, entries []Entry) 
 	request := NewRequest(
 		client,
 		RequestOptions{
-			URI:           client.GetBaseUrl() + "entities/" + eid + "/entries?v=" + client.GetApiVersion(),
-			RequestMethod: "POST",
-			RequestBody:   entries,
+			URI:    client.GetBaseUrl() + "entities/" + eid + "/entries?v=" + client.GetApiVersion(),
+			Method: "POST",
+			Body:   entries,
 		},
 	)
 
@@ -221,9 +237,9 @@ func (client *ApiAiClient) EntitiesUpdateRequest(entities []Entity) (QueryRespon
 	request := NewRequest(
 		client,
 		RequestOptions{
-			URI:           client.GetBaseUrl() + "entities?v=" + client.GetApiVersion(),
-			RequestMethod: "PUT",
-			RequestBody:   entities,
+			URI:    client.GetBaseUrl() + "entities?v=" + client.GetApiVersion(),
+			Method: "PUT",
+			Body:   entities,
 		},
 	)
 
@@ -245,9 +261,9 @@ func (client *ApiAiClient) EntitiesUpdateEntityRequest(eid string, entity Entity
 	request := NewRequest(
 		client,
 		RequestOptions{
-			URI:           client.GetBaseUrl() + "entities/" + eid + "?v=" + client.GetApiVersion(),
-			RequestMethod: "PUT",
-			RequestBody:   entity,
+			URI:    client.GetBaseUrl() + "entities/" + eid + "?v=" + client.GetApiVersion(),
+			Method: "PUT",
+			Body:   entity,
 		},
 	)
 
@@ -269,9 +285,9 @@ func (client *ApiAiClient) EntitiesUpdateEntityEntriesRequest(eid string, entrie
 	request := NewRequest(
 		client,
 		RequestOptions{
-			URI:           client.GetBaseUrl() + "entities/" + eid + "/entries?v=" + client.GetApiVersion(),
-			RequestMethod: "PUT",
-			RequestBody:   entries,
+			URI:    client.GetBaseUrl() + "entities/" + eid + "/entries?v=" + client.GetApiVersion(),
+			Method: "PUT",
+			Body:   entries,
 		},
 	)
 
@@ -293,9 +309,9 @@ func (client *ApiAiClient) EntitiesDeleteRequest(eid string) (QueryResponse, err
 	request := NewRequest(
 		client,
 		RequestOptions{
-			URI:           client.GetBaseUrl() + "entities/" + eid + "?v=" + client.GetApiVersion(),
-			RequestMethod: "DELETE",
-			RequestBody:   nil,
+			URI:    client.GetBaseUrl() + "entities/" + eid + "?v=" + client.GetApiVersion(),
+			Method: "DELETE",
+			Body:   nil,
 		},
 	)
 
@@ -317,9 +333,9 @@ func (client *ApiAiClient) EntitiesDeleteEntriesRequest(eid string, values []str
 	request := NewRequest(
 		client,
 		RequestOptions{
-			URI:           client.GetBaseUrl() + "entities/" + eid + "/entries?v=" + client.GetApiVersion(),
-			RequestMethod: "DELETE",
-			RequestBody:   values,
+			URI:    client.GetBaseUrl() + "entities/" + eid + "/entries?v=" + client.GetApiVersion(),
+			Method: "DELETE",
+			Body:   values,
 		},
 	)
 
@@ -341,9 +357,9 @@ func (client *ApiAiClient) UserEntitiesCreateRequest(userEntities []UserEntity) 
 	request := NewRequest(
 		client,
 		RequestOptions{
-			URI:           client.GetBaseUrl() + "userEntities?v=" + client.GetApiVersion(),
-			RequestMethod: "POST",
-			RequestBody: struct {
+			URI:    client.GetBaseUrl() + "userEntities?v=" + client.GetApiVersion(),
+			Method: "POST",
+			Body: struct {
 				SessionID string
 				Entities  []UserEntity
 			}{
@@ -371,9 +387,9 @@ func (client *ApiAiClient) UserEntitiesUpdateRequest(name string, userEntity Use
 	request := NewRequest(
 		client,
 		RequestOptions{
-			URI:           client.GetBaseUrl() + "userEntities/" + name + "?v=" + client.GetApiVersion(),
-			RequestMethod: "PUT",
-			RequestBody:   userEntity,
+			URI:    client.GetBaseUrl() + "userEntities/" + name + "?v=" + client.GetApiVersion(),
+			Method: "PUT",
+			Body:   userEntity,
 		},
 	)
 
@@ -395,9 +411,9 @@ func (client *ApiAiClient) UserEntitiesFindByNameRequest(name string) (UserEntit
 	request := NewRequest(
 		client,
 		RequestOptions{
-			URI:           client.GetBaseUrl() + "userEntities/" + name + "?v=" + client.GetApiVersion() + "&sessionId=" + client.GetSessionID(),
-			RequestMethod: "GET",
-			RequestBody:   nil,
+			URI:    client.GetBaseUrl() + "userEntities/" + name + "?v=" + client.GetApiVersion() + "&sessionId=" + client.GetSessionID(),
+			Method: "GET",
+			Body:   nil,
 		},
 	)
 
@@ -419,9 +435,9 @@ func (client *ApiAiClient) UserEntitiesDeleteByNameRequest(name string) (QueryRe
 	request := NewRequest(
 		client,
 		RequestOptions{
-			URI:           client.GetBaseUrl() + "userEntities/" + name + "?v=" + client.GetApiVersion() + "&sessionId=" + client.GetSessionID(),
-			RequestMethod: "DELETE",
-			RequestBody:   nil,
+			URI:    client.GetBaseUrl() + "userEntities/" + name + "?v=" + client.GetApiVersion() + "&sessionId=" + client.GetSessionID(),
+			Method: "DELETE",
+			Body:   nil,
 		},
 	)
 
@@ -443,9 +459,9 @@ func (client *ApiAiClient) IntentsFindAllRequest() ([]IntentAgent, error) {
 	request := NewRequest(
 		client,
 		RequestOptions{
-			URI:           client.GetBaseUrl() + "intents?v=" + client.GetApiVersion(),
-			RequestMethod: "GET",
-			RequestBody:   nil,
+			URI:    client.GetBaseUrl() + "intents?v=" + client.GetApiVersion(),
+			Method: "GET",
+			Body:   nil,
 		},
 	)
 
@@ -467,9 +483,9 @@ func (client *ApiAiClient) IntentsFindByIdRequest(id string) (Intent, error) {
 	request := NewRequest(
 		client,
 		RequestOptions{
-			URI:           client.GetBaseUrl() + "intents/" + id + "?v=" + client.GetApiVersion(),
-			RequestMethod: "GET",
-			RequestBody:   nil,
+			URI:    client.GetBaseUrl() + "intents/" + id + "?v=" + client.GetApiVersion(),
+			Method: "GET",
+			Body:   nil,
 		},
 	)
 
@@ -491,9 +507,9 @@ func (client *ApiAiClient) IntentsCreateRequest(intent Intent) (QueryResponse, e
 	request := NewRequest(
 		client,
 		RequestOptions{
-			URI:           client.GetBaseUrl() + "intents?v=" + client.GetApiVersion(),
-			RequestMethod: "POST",
-			RequestBody:   intent,
+			URI:    client.GetBaseUrl() + "intents?v=" + client.GetApiVersion(),
+			Method: "POST",
+			Body:   intent,
 		},
 	)
 
@@ -515,9 +531,9 @@ func (client *ApiAiClient) IntentsUpdateRequest(id string, intent Intent) (Query
 	request := NewRequest(
 		client,
 		RequestOptions{
-			URI:           client.GetBaseUrl() + "intents/" + id + "?v=" + client.GetApiVersion(),
-			RequestMethod: "PUT",
-			RequestBody:   intent,
+			URI:    client.GetBaseUrl() + "intents/" + id + "?v=" + client.GetApiVersion(),
+			Method: "PUT",
+			Body:   intent,
 		},
 	)
 
@@ -539,9 +555,9 @@ func (client *ApiAiClient) IntentsDeleteRequest(id string, intent Intent) (Query
 	request := NewRequest(
 		client,
 		RequestOptions{
-			URI:           client.GetBaseUrl() + "intents/" + id + "?v=" + client.GetApiVersion(),
-			RequestMethod: "DELETE",
-			RequestBody:   RequestBody{},
+			URI:    client.GetBaseUrl() + "intents/" + id + "?v=" + client.GetApiVersion(),
+			Method: "DELETE",
+			Body:   RequestBody{},
 		},
 	)
 
@@ -563,9 +579,9 @@ func (client *ApiAiClient) ContextsFindAllRequest() ([]Context, error) {
 	request := NewRequest(
 		client,
 		RequestOptions{
-			URI:           client.GetBaseUrl() + "contexts?sessionId=" + client.GetSessionID(),
-			RequestMethod: "GET",
-			RequestBody:   nil,
+			URI:    client.GetBaseUrl() + "contexts?sessionId=" + client.GetSessionID(),
+			Method: "GET",
+			Body:   nil,
 		},
 	)
 
@@ -587,9 +603,9 @@ func (client *ApiAiClient) ContextsFindByNameRequest(name string) (Context, erro
 	request := NewRequest(
 		client,
 		RequestOptions{
-			URI:           client.GetBaseUrl() + "contexts/" + name + "?sessionId=" + client.GetSessionID(),
-			RequestMethod: "GET",
-			RequestBody:   nil,
+			URI:    client.GetBaseUrl() + "contexts/" + name + "?sessionId=" + client.GetSessionID(),
+			Method: "GET",
+			Body:   nil,
 		},
 	)
 
@@ -611,9 +627,9 @@ func (client *ApiAiClient) ContextsCreateRequest(contexts []Context) (QueryRespo
 	request := NewRequest(
 		client,
 		RequestOptions{
-			URI:           client.GetBaseUrl() + "contexts?sessionId=" + client.GetSessionID(),
-			RequestMethod: "POST",
-			RequestBody:   contexts,
+			URI:    client.GetBaseUrl() + "contexts?sessionId=" + client.GetSessionID(),
+			Method: "POST",
+			Body:   contexts,
 		},
 	)
 
@@ -635,9 +651,9 @@ func (client *ApiAiClient) ContextsDeleteRequest() (QueryResponse, error) {
 	request := NewRequest(
 		client,
 		RequestOptions{
-			URI:           client.GetBaseUrl() + "contexts?sessionId=" + client.GetSessionID(),
-			RequestMethod: "DELETE",
-			RequestBody:   nil,
+			URI:    client.GetBaseUrl() + "contexts?sessionId=" + client.GetSessionID(),
+			Method: "DELETE",
+			Body:   nil,
 		},
 	)
 
@@ -661,9 +677,9 @@ func (client *ApiAiClient) ContextsDeleteByNameRequest(name string) (QueryRespon
 	request := NewRequest(
 		client,
 		RequestOptions{
-			URI:           client.GetBaseUrl() + "contexts/" + name + "?sessionId=" + client.GetSessionID(),
-			RequestMethod: "DELETE",
-			RequestBody:   nil,
+			URI:    client.GetBaseUrl() + "contexts/" + name + "?sessionId=" + client.GetSessionID(),
+			Method: "DELETE",
+			Body:   nil,
 		},
 	)
 

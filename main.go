@@ -15,24 +15,6 @@ func main() {
 		log.Fatal(err)
 	}
 
-	resp, err := client.TextRequest("hello")
-	if err != nil {
-		log.Fatal(err)
-	}
-	fmt.Println(resp)
-
-	/*err, resp = client.ContextsCreateRequest()
-	if err != nil {
-		log.Fatal(err)
-	}
-	fmt.Println(resp)*/
-
-	resp, err = client.EventRequest("test_event", nil)
-	if err != nil {
-		log.Fatal(err)
-	}
-	fmt.Println(resp)
-
 	resp2, err := client.EntitiesFindAllRequest()
 	if err != nil {
 		log.Fatal(err)
