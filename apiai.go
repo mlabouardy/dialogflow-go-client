@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 
 	. "github.com/mlabouardy/apiai-go-client/models"
 	uuid "github.com/satori/go.uuid"
@@ -189,19 +190,40 @@ func (client *ApiAiClient) EntitiesCreateRequest(entity Entity) (QueryResponse, 
 	return queryResponse, err
 }
 
-/*
-func (client *ApiAiClient) EntitiesCreateEntryRequest(entry Entry) (QueryResponse, error) {
+// Adds entries to the specified entity.
+func (client *ApiAiClient) EntitiesAddEntryRequest(eid string, entries []Entry) (QueryResponse, error) {
+	var queryResponse QueryResponse
+
+	request := NewRequest(
+		client,
+		RequestOptions{
+			URI:           client.GetBaseUrl() + "entities/" + eid + "/entries?v=" + client.GetApiVersion(),
+			RequestMethod: "POST",
+			RequestBody:   entries,
+		},
+	)
+
+	data, err := request.Perform()
+
+	if err != nil {
+		return queryResponse, err
+	}
+
+	err = json.Unmarshal(data, &queryResponse)
+
+	return queryResponse, err
+}
+
+// Creates or updates an array of entities
+func (client *ApiAiClient) EntitiesUpdateRequest(entities []Entity) (QueryResponse, error) {
 	var queryResponse QueryResponse
 
 	request := NewRequest(
 		client,
 		RequestOptions{
 			URI:           client.GetBaseUrl() + "entities?v=" + client.GetApiVersion(),
-			RequestMethod: "POST",
-			RequestBody: RequestBody{
-				Name:    entity.Name,
-				Entries: entity.Entries,
-			},
+			RequestMethod: "PUT",
+			RequestBody:   entities,
 		},
 	)
 
@@ -211,30 +233,23 @@ func (client *ApiAiClient) EntitiesCreateEntryRequest(entry Entry) (QueryRespons
 		return queryResponse, err
 	}
 
+	fmt.Println(string(data))
+
 	err = json.Unmarshal(data, &queryResponse)
 
 	return queryResponse, err
-}*/
+}
 
-/*
-
-
-
-
-// Creates a new entity
-func (client *ApiAiClient) EntitiesCreateRequest(entityRequest EntityRequest) {
+// Updates the specified entity
+func (client *ApiAiClient) EntitiesUpdateEntityRequest(eid string, entity Entity) (QueryResponse, error) {
 	var queryResponse QueryResponse
 
-	if entityRequest == EntityRequest{} {
-		return queryResponse, errors.New("entity name can not be empty")
-	}
-
 	request := NewRequest(
 		client,
 		RequestOptions{
-			URI:           client.GetBaseUrl() + "query?v=" + client.GetApiVersion(),
-			RequestMethod: "POST",
-			RequestBody:   entityRequest,
+			URI:           client.GetBaseUrl() + "entities/" + eid + "?v=" + client.GetApiVersion(),
+			RequestMethod: "PUT",
+			RequestBody:   entity,
 		},
 	)
 
@@ -247,115 +262,79 @@ func (client *ApiAiClient) EntitiesCreateRequest(entityRequest EntityRequest) {
 	err = json.Unmarshal(data, &queryResponse)
 
 	return queryResponse, err
-}*/
+}
 
-/*
-func (client *ApiAiClient) UserEntitiesCreateRequest(entities []Entity) (error, ServerResponse) {
-	if len(entities) == 0 {
-		return errors.New("entities can not be empty"), ServerResponse{}
-	}
+// Updates entity entries
+func (client *ApiAiClient) EntitiesUpdateEntityEntriesRequest(eid string, entries []Entry) (QueryResponse, error) {
+	var queryResponse QueryResponse
 
 	request := NewRequest(
 		client,
 		RequestOptions{
-			URI:           client.GetBaseUrl() + "userEntities?v=" + client.GetApiVersion(),
-			RequestMethod: "POST",
-			RequestBody: RequestBody{
-				Entities: entities,
-			},
+			URI:           client.GetBaseUrl() + "entities/" + eid + "/entries?v=" + client.GetApiVersion(),
+			RequestMethod: "PUT",
+			RequestBody:   entries,
 		},
 	)
 
-	return request.Perform()
+	data, err := request.Perform()
+
+	if err != nil {
+		return queryResponse, err
+	}
+
+	err = json.Unmarshal(data, &queryResponse)
+
+	return queryResponse, err
 }
 
-func (client *ApiAiClient) UserEntitiesRetrieveRequest(name string) (error, ServerResponse) {
-	if name == "" {
-		return errors.New("name can not be empty"), ServerResponse{}
-	}
+// Deletes the specified entity
+func (client *ApiAiClient) EntitiesDeleteRequest(eid string) (QueryResponse, error) {
+	var queryResponse QueryResponse
 
 	request := NewRequest(
 		client,
 		RequestOptions{
-			URI:           client.GetBaseUrl() + "userEntities/" + name + "?v=" + client.GetApiVersion(),
-			RequestMethod: "GET",
-			RequestBody:   RequestBody{},
-		},
-	)
-
-	return request.Perform()
-}
-
-func (client *ApiAiClient) UserEntitiesDeleteRequest(name string) (error, ServerResponse) {
-	if name == "" {
-		return errors.New("name can not be empty"), ServerResponse{}
-	}
-
-	request := NewRequest(
-		client,
-		RequestOptions{
-			URI:           client.GetBaseUrl() + "userEntities/" + name + "?v=" + client.GetApiVersion(),
+			URI:           client.GetBaseUrl() + "entities/" + eid + "?v=" + client.GetApiVersion(),
 			RequestMethod: "DELETE",
-			RequestBody:   RequestBody{},
+			RequestBody:   nil,
 		},
 	)
 
-	return request.Perform()
+	data, err := request.Perform()
+
+	if err != nil {
+		return queryResponse, err
+	}
+
+	err = json.Unmarshal(data, &queryResponse)
+
+	return queryResponse, err
 }
 
-func (client *ApiAiClient) ContextsCreateRequest() (error, ServerResponse) {
+// Deletes entity entries
+func (client *ApiAiClient) EntitiesDeleteEntriesRequest(eid string, values []string) (QueryResponse, error) {
+	var queryResponse QueryResponse
+
 	request := NewRequest(
 		client,
 		RequestOptions{
-			URI:           client.GetBaseUrl() + "contexts?v=" + client.GetApiVersion(),
-			RequestMethod: "GET",
-			RequestBody: RequestBody{
-				SessionID: client.GetSessionID(),
-			},
+			URI:           client.GetBaseUrl() + "entities/" + eid + "/entries?v=" + client.GetApiVersion(),
+			RequestMethod: "DELETE",
+			RequestBody:   values,
 		},
 	)
 
-	return request.Perform()
+	data, err := request.Perform()
+
+	if err != nil {
+		return queryResponse, err
+	}
+
+	err = json.Unmarshal(data, &queryResponse)
+
+	return queryResponse, err
 }
-
-func (client *ApiAiClient) ContextsRetriveRequest(name string) (error, ServerResponse) {
-	if name == "" {
-		return errors.New("context name can not be empty"), ServerResponse{}
-	}
-
-	request := NewRequest(
-		client,
-		RequestOptions{
-			URI:           client.GetBaseUrl() + "contexts/" + name + "?v=" + client.GetApiVersion() + "&sessionId=" + client.GetSessionID(),
-			RequestMethod: "GET",
-			RequestBody:   RequestBody{},
-		},
-	)
-
-	return request.Perform()
-}*/
-
-/*
-func (client *ApiAiClient) UserEntitiesUpdateRequest(name string, entries []Entry) (error, ServerResponse) {
-	if name == "" {
-		return errors.New("name can not be empty"), ServerResponse{}
-	}
-
-	if len(entities) == 0 {
-		return errors.New("entities can not be empty"), ServerResponse{}
-	}
-
-	request := NewRequest(
-		client,
-		RequestOptions{
-			URI:           client.GetBaseUrl() + "userEntities/" + name + "?v=" + client.GetApiVersion(),
-			RequestMethod: "GET",
-		},
-		RequestBody{},
-	)
-
-	return request.Perform()
-}*/
 
 func (client *ApiAiClient) GetAccessToken() string {
 	return client.accessToken
