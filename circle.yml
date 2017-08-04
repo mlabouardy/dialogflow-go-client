@@ -1,0 +1,21 @@
+version: "2"
+jobs:
+  build:
+    docker:
+      - image: circleci/golang:1.8.0
+
+    working_directory: /go/src/github/mlabouardy/apiai-go-client
+
+    steps:
+      - checkout
+      - run:
+          name: Get dependencies
+          command: go get -v
+
+      - run:
+          name: Check code style
+          command: go vet ./...
+
+      - run:
+          name: Unit tests
+          command: go test ./...
