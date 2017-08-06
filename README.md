@@ -1,6 +1,6 @@
 # apiai-go-client
 
-[![CircleCI](https://circleci.com/gh/mlabouardy/apiai-go-client.svg?style=svg&circle-token=1f1f702ba1cb3cb0ee1385992d5fdf2dba02ea3f)](https://circleci.com/gh/mlabouardy/apiai-go-client) [![MIT License](http://img.shields.io/badge/license-MIT-blue.svg?style=flat)](LICENSE)
+[![CircleCI](https://circleci.com/gh/mlabouardy/apiai-go-client.svg?style=svg&circle-token=1f1f702ba1cb3cb0ee1385992d5fdf2dba02ea3f)](https://circleci.com/gh/mlabouardy/apiai-go-client) [![License](https://img.shields.io/badge/License-Apache%202.0-yellowgreen.svg)](https://opensource.org/licenses/Apache-2.0)
 
 This library allows integrating agents from the [Api.ai](http://api.ai) natural language processing service with your Golang application.
 
@@ -52,7 +52,7 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	for entity := range entities {
+	for _, entity := range entities {
 		fmt.Println(entity.Name)
 	}
 }
