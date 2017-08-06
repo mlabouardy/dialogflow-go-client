@@ -20,7 +20,7 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	for entity := range entities {
+	for _, entity := range entities {
 		fmt.Println(entity.Name)
 	}
 }
