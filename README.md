@@ -20,10 +20,9 @@ package main
 
 import (
 	"fmt"
-	"log"
-
 	"github.com/mlabouardy/apiai-go-client"
 	"github.com/mlabouardy/apiai-go-client/models"
+	"log"
 )
 
 func main() {
@@ -34,13 +33,13 @@ func main() {
 		log.Fatal(err)
 	}
 
-  entities, err := client.EntitiesFindAllRequest()
+	entities, err := client.EntitiesFindAllRequest()
 	if err != nil {
 		log.Fatal(err)
 	}
-  for entity := range entities {
-    fmt.Println(entity.Name)
-  }
+	for entity := range entities {
+		fmt.Println(entity.Name)
+	}
 }
 ```
 * Run following command.
