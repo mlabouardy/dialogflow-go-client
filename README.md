@@ -4,16 +4,31 @@
 
 This library allows integrating agents from the [Api.ai](http://api.ai) natural language processing service with your Golang application.
 
+* [Prerequsites](#prerequsites)
 * [Installation](#installation)
+* [Features](#features)
 * [Usage](#usage)
+* [Documentation](#documentation)
+
+# Prerequsites
+
+Create an [API.AI account](http://api.ai).
 
 # Installation
 
 ```shell
 go get github.com/mlabouardy/apiai-go-client
 ```
+# Features
+
+* Queries
+* Contexts
+* Intents
+* UserIntents
+* Entities
 
 # Usage
+
 * Create `main.go` file with the following code:
 ```golang
 package main
@@ -47,3 +62,7 @@ func main() {
 go run main.go
 ```
 * Your can find more examples in [`examples`](examples) directory.
+
+# Documentation
+
+Documentation is available at http://api.ai.
