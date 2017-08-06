@@ -1,8 +1,8 @@
 package models
 
 type UserEntity struct {
-	SessionID string  `json:"sessionId"`
-	Name      string  `json:"name"`
-	Extend    bool    `json:"extend"`
-	Entries   []Entry `json:"entries"`
+	SessionID string  `json:"sessionId,omitempty"`
+	Name      string  `json:"name,omitempty"`
+	Extend    bool    `json:"extend,omitempty"`
+	Entries   []Entry `json:"entries,omitempty"`
 }

@@ -17,6 +17,7 @@ type Request struct {
 	QueryParams map[string]string
 }
 
+// Initialize a new HTTP request
 func NewRequest(client *ApiAiClient, overridedRequestOptions RequestOptions) *Request {
 	headers := map[string]string{
 		"Authorization": "Bearer " + client.GetAccessToken(),
@@ -35,6 +36,7 @@ func NewRequest(client *ApiAiClient, overridedRequestOptions RequestOptions) *Re
 	return request
 }
 
+// Execute an HTTP request
 func (r *Request) Perform() ([]byte, error) {
 	var data []byte
 	client := &http.Client{}

@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"reflect"
 
 	. "github.com/mlabouardy/apiai-go-client/models"
 	uuid "github.com/satori/go.uuid"
@@ -18,6 +17,7 @@ type ApiAiClient struct {
 	sessionID   string
 }
 
+// Create API.AI instance
 func NewApiAiClient(options Options) (error, *ApiAiClient) {
 	if (options == Options{} || options.AccessToken == "") {
 		return errors.New("Access token is required for new ApiAiClient instance"), nil
@@ -50,33 +50,6 @@ func NewApiAiClient(options Options) (error, *ApiAiClient) {
 	return nil, client
 }
 
-func queryToMap(query Query) map[string]string {
-	params := make(map[string]string)
-
-	if query.Query != "" {
-		params["query"] = query.Query
-	}
-
-	if !reflect.DeepEqual(query.E, Event{}) {
-		params["e"] = query.Event.Name
-	}
-
-	if !reflect.DeepEqual(query.Contexts, []Context{}) {
-		params["contexts"] = query.Contexts[0].Name
-	}
-
-	if !reflect.DeepEqual(query.Location, Location{}) {
-		params["latitude"] = query.Location.Latitude
-		params["longitude"] = query.Location.Longitude
-	}
-
-	params["v"] = query.V
-	params["sessionId"] = query.SessionID
-	params["lang"] = query.Lang
-
-	return params
-}
-
 // Takes natural language text and information as query parameters and returns information as JSON
 func (client *ApiAiClient) QueryFindRequest(query Query) (QueryResponse, error) {
 	var queryResponse QueryResponse
@@ -91,7 +64,7 @@ func (client *ApiAiClient) QueryFindRequest(query Query) (QueryResponse, error) 
 			URI:         client.GetBaseUrl() + "query",
 			Method:      "GET",
 			Body:        nil,
-			QueryParams: queryToMap(query),
+			QueryParams: query.ToMap(),
 		},
 	)
 
@@ -139,7 +112,7 @@ func (client *ApiAiClient) EntitiesFindAllRequest() ([]Entity, error) {
 		RequestOptions{
 			URI:    client.GetBaseUrl() + "entities?v=" + client.GetApiVersion(),
 			Method: "GET",
-			Body:   RequestBody{},
+			Body:   nil,
 		},
 	)
 
@@ -163,7 +136,7 @@ func (client *ApiAiClient) EntitiesFindByIdRequest(eid string) (Entity, error) {
 		RequestOptions{
 			URI:    client.GetBaseUrl() + "entities/" + eid + "?v=" + client.GetApiVersion(),
 			Method: "GET",
-			Body:   RequestBody{},
+			Body:   nil,
 		},
 	)
 
@@ -178,6 +151,7 @@ func (client *ApiAiClient) EntitiesFindByIdRequest(eid string) (Entity, error) {
 	return entityResponse, err
 }
 
+// Creates a new entity
 func (client *ApiAiClient) EntitiesCreateRequest(entity Entity) (QueryResponse, error) {
 	var queryResponse QueryResponse
 
@@ -186,12 +160,7 @@ func (client *ApiAiClient) EntitiesCreateRequest(entity Entity) (QueryResponse, 
 		RequestOptions{
 			URI:    client.GetBaseUrl() + "entities?v=" + client.GetApiVersion(),
 			Method: "POST",
-			Body: RequestBody{
-				Lang:      client.GetApiLang(),
-				SessionID: client.GetSessionID(),
-				Name:      entity.Name,
-				Entries:   entity.Entries,
-			},
+			Body:   entity,
 		},
 	)
 
@@ -557,7 +526,7 @@ func (client *ApiAiClient) IntentsDeleteRequest(id string, intent Intent) (Query
 		RequestOptions{
 			URI:    client.GetBaseUrl() + "intents/" + id + "?v=" + client.GetApiVersion(),
 			Method: "DELETE",
-			Body:   RequestBody{},
+			Body:   nil,
 		},
 	)
 
@@ -696,10 +665,12 @@ func (client *ApiAiClient) ContextsDeleteByNameRequest(name string) (QueryRespon
 	return queryResponse, err
 }
 
+// GET API.AI access token
 func (client *ApiAiClient) GetAccessToken() string {
 	return client.accessToken
 }
 
+// GET API.AI version
 func (client *ApiAiClient) GetApiVersion() string {
 	if client.apiVersion != "" {
 		return client.apiVersion
@@ -707,6 +678,7 @@ func (client *ApiAiClient) GetApiVersion() string {
 	return DEFAULT_API_VERSION
 }
 
+// GET API.AI language
 func (client *ApiAiClient) GetApiLang() string {
 	if client.apiLang != "" {
 		return client.apiLang
@@ -714,6 +686,7 @@ func (client *ApiAiClient) GetApiLang() string {
 	return DEFAULT_CLIENT_LANG
 }
 
+// Get API.AI base url
 func (client *ApiAiClient) GetBaseUrl() string {
 	if client.apiBaseUrl != "" {
 		return client.apiBaseUrl
@@ -721,10 +694,12 @@ func (client *ApiAiClient) GetBaseUrl() string {
 	return DEFAULT_BASE_URL
 }
 
+// Get current session ID
 func (client *ApiAiClient) GetSessionID() string {
 	return client.sessionID
 }
 
+// Set a new seesion ID
 func (client *ApiAiClient) SetSessionID(sessionID string) {
 	client.sessionID = sessionID
 }
