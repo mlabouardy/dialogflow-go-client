@@ -1,6 +1,6 @@
 # apiai-go-client
 
-[![CircleCI](https://circleci.com/gh/mlabouardy/apiai-go-client.svg?style=svg&circle-token=1f1f702ba1cb3cb0ee1385992d5fdf2dba02ea3f)](https://circleci.com/gh/mlabouardy/apiai-go-client) [![License](https://img.shields.io/badge/License-Apache%202.0-yellowgreen.svg)](https://opensource.org/licenses/Apache-2.0)
+[![CircleCI](https://circleci.com/gh/mlabouardy/apiai-go-client.svg?style=svg&circle-token=1f1f702ba1cb3cb0ee1385992d5fdf2dba02ea3f)](https://circleci.com/gh/mlabouardy/apiai-go-client) [![License](https://img.shields.io/badge/License-Apache%202.0-yellowgreen.svg)](https://opensource.org/licenses/Apache-2.0) [![Go Report Card](https://goreportcard.com/badge/github.com/mlabouardy/apiai-go-client)](https://goreportcard.com/report/github.com/mlabouardy/apiai-go-client)
 
 This library allows integrating agents from the [Api.ai](http://api.ai) natural language processing service with your Golang application.
 
