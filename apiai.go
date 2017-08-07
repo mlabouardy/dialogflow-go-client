@@ -3,7 +3,7 @@ package apiai
 import (
 	"encoding/json"
 	"errors"
-	"fmt"
+	"reflect"
 
 	. "github.com/mlabouardy/apiai-go-client/models"
 	uuid "github.com/satori/go.uuid"
@@ -19,7 +19,7 @@ type ApiAiClient struct {
 
 // Create API.AI instance
 func NewApiAiClient(options Options) (error, *ApiAiClient) {
-	if (options == Options{} || options.AccessToken == "") {
+	if (reflect.DeepEqual(options, Options{}) || options.AccessToken == "") {
 		return errors.New("Access token is required for new ApiAiClient instance"), nil
 	}
 
@@ -52,11 +52,23 @@ func NewApiAiClient(options Options) (error, *ApiAiClient) {
 
 // Takes natural language text and information as query parameters and returns information as JSON
 func (client *ApiAiClient) QueryFindRequest(query Query) (QueryResponse, error) {
-	var queryResponse QueryResponse
+	var response QueryResponse
 
-	query.V = client.GetApiVersion()
-	query.Lang = client.GetApiLang()
-	query.SessionID = client.GetSessionID()
+	if reflect.DeepEqual(query, Query{}) {
+		return response, errors.New("query cannot be empty")
+	}
+
+	if query.V != "" {
+		query.V = client.GetApiVersion()
+	}
+
+	if query.Lang != "" {
+		query.Lang = client.GetApiLang()
+	}
+
+	if query.SessionID != "" {
+		query.SessionID = client.GetSessionID()
+	}
 
 	request := NewRequest(
 		client,
@@ -69,19 +81,21 @@ func (client *ApiAiClient) QueryFindRequest(query Query) (QueryResponse, error) 
 	)
 
 	data, err := request.Perform()
-
 	if err != nil {
-		return queryResponse, err
+		return response, err
 	}
 
-	err = json.Unmarshal(data, &queryResponse)
-
-	return queryResponse, err
+	err = json.Unmarshal(data, &response)
+	return response, err
 }
 
 // Takes natural language text and information as JSON in the POST body and returns information as JSON
 func (client *ApiAiClient) QueryCreateRequest(query Query) (QueryResponse, error) {
-	var queryResponse QueryResponse
+	var response QueryResponse
+
+	if reflect.DeepEqual(query, Query{}) {
+		return response, errors.New("query cannot be empty")
+	}
 
 	request := NewRequest(
 		client,
@@ -93,19 +107,17 @@ func (client *ApiAiClient) QueryCreateRequest(query Query) (QueryResponse, error
 	)
 
 	data, err := request.Perform()
-
 	if err != nil {
-		return queryResponse, err
+		return response, err
 	}
 
-	err = json.Unmarshal(data, &queryResponse)
-
-	return queryResponse, err
+	err = json.Unmarshal(data, &response)
+	return response, err
 }
 
 // Retrieves a list of all entities for the agent
 func (client *ApiAiClient) EntitiesFindAllRequest() ([]Entity, error) {
-	var entityResponse []Entity
+	var response []Entity
 
 	request := NewRequest(
 		client,
@@ -117,19 +129,21 @@ func (client *ApiAiClient) EntitiesFindAllRequest() ([]Entity, error) {
 	)
 
 	data, err := request.Perform()
-
 	if err != nil {
-		return entityResponse, err
+		return response, err
 	}
 
-	err = json.Unmarshal(data, &entityResponse)
-
-	return entityResponse, err
+	err = json.Unmarshal(data, &response)
+	return response, err
 }
 
 // Retrieves the specified entity
 func (client *ApiAiClient) EntitiesFindByIdRequest(eid string) (Entity, error) {
-	var entityResponse Entity
+	var response Entity
+
+	if eid == "" {
+		return response, errors.New("eid cannot be empty")
+	}
 
 	request := NewRequest(
 		client,
@@ -141,19 +155,21 @@ func (client *ApiAiClient) EntitiesFindByIdRequest(eid string) (Entity, error) {
 	)
 
 	data, err := request.Perform()
-
 	if err != nil {
-		return entityResponse, err
+		return response, err
 	}
 
-	err = json.Unmarshal(data, &entityResponse)
-
-	return entityResponse, err
+	err = json.Unmarshal(data, &response)
+	return response, err
 }
 
 // Creates a new entity
 func (client *ApiAiClient) EntitiesCreateRequest(entity Entity) (QueryResponse, error) {
-	var queryResponse QueryResponse
+	var response QueryResponse
+
+	if reflect.DeepEqual(entity, Entity{}) {
+		return response, errors.New("entity cannot be empty")
+	}
 
 	request := NewRequest(
 		client,
@@ -165,19 +181,21 @@ func (client *ApiAiClient) EntitiesCreateRequest(entity Entity) (QueryResponse, 
 	)
 
 	data, err := request.Perform()
-
 	if err != nil {
-		return queryResponse, err
+		return response, err
 	}
 
-	err = json.Unmarshal(data, &queryResponse)
-
-	return queryResponse, err
+	err = json.Unmarshal(data, &response)
+	return response, err
 }
 
 // Adds entries to the specified entity.
 func (client *ApiAiClient) EntitiesAddEntryRequest(eid string, entries []Entry) (QueryResponse, error) {
-	var queryResponse QueryResponse
+	var response QueryResponse
+
+	if reflect.DeepEqual(entries, []Entry{}) || eid == "" {
+		return response, errors.New("entries and eid cannot be empty")
+	}
 
 	request := NewRequest(
 		client,
@@ -189,19 +207,21 @@ func (client *ApiAiClient) EntitiesAddEntryRequest(eid string, entries []Entry) 
 	)
 
 	data, err := request.Perform()
-
 	if err != nil {
-		return queryResponse, err
+		return response, err
 	}
 
-	err = json.Unmarshal(data, &queryResponse)
-
-	return queryResponse, err
+	err = json.Unmarshal(data, &response)
+	return response, err
 }
 
 // Creates or updates an array of entities
 func (client *ApiAiClient) EntitiesUpdateRequest(entities []Entity) (QueryResponse, error) {
-	var queryResponse QueryResponse
+	var response QueryResponse
+
+	if reflect.DeepEqual(entities, []Entity{}) {
+		return response, errors.New("entities cannot be empty")
+	}
 
 	request := NewRequest(
 		client,
@@ -213,19 +233,21 @@ func (client *ApiAiClient) EntitiesUpdateRequest(entities []Entity) (QueryRespon
 	)
 
 	data, err := request.Perform()
-
 	if err != nil {
-		return queryResponse, err
+		return response, err
 	}
 
-	err = json.Unmarshal(data, &queryResponse)
-
-	return queryResponse, err
+	err = json.Unmarshal(data, &response)
+	return response, err
 }
 
 // Updates the specified entity
 func (client *ApiAiClient) EntitiesUpdateEntityRequest(eid string, entity Entity) (QueryResponse, error) {
-	var queryResponse QueryResponse
+	var response QueryResponse
+
+	if reflect.DeepEqual(entity, Entity{}) || eid == "" {
+		return response, errors.New("entity and eid cannot be empty")
+	}
 
 	request := NewRequest(
 		client,
@@ -237,19 +259,21 @@ func (client *ApiAiClient) EntitiesUpdateEntityRequest(eid string, entity Entity
 	)
 
 	data, err := request.Perform()
-
 	if err != nil {
-		return queryResponse, err
+		return response, err
 	}
 
-	err = json.Unmarshal(data, &queryResponse)
-
-	return queryResponse, err
+	err = json.Unmarshal(data, &response)
+	return response, err
 }
 
 // Updates entity entries
 func (client *ApiAiClient) EntitiesUpdateEntityEntriesRequest(eid string, entries []Entry) (QueryResponse, error) {
-	var queryResponse QueryResponse
+	var response QueryResponse
+
+	if reflect.DeepEqual(entries, Entry{}) || eid == "" {
+		return response, errors.New("entries and eid cannot be empty")
+	}
 
 	request := NewRequest(
 		client,
@@ -261,19 +285,21 @@ func (client *ApiAiClient) EntitiesUpdateEntityEntriesRequest(eid string, entrie
 	)
 
 	data, err := request.Perform()
-
 	if err != nil {
-		return queryResponse, err
+		return response, err
 	}
 
-	err = json.Unmarshal(data, &queryResponse)
-
-	return queryResponse, err
+	err = json.Unmarshal(data, &response)
+	return response, err
 }
 
 // Deletes the specified entity
 func (client *ApiAiClient) EntitiesDeleteRequest(eid string) (QueryResponse, error) {
-	var queryResponse QueryResponse
+	var response QueryResponse
+
+	if eid == "" {
+		return response, errors.New("eid cannot be empty")
+	}
 
 	request := NewRequest(
 		client,
@@ -285,19 +311,21 @@ func (client *ApiAiClient) EntitiesDeleteRequest(eid string) (QueryResponse, err
 	)
 
 	data, err := request.Perform()
-
 	if err != nil {
-		return queryResponse, err
+		return response, err
 	}
 
-	err = json.Unmarshal(data, &queryResponse)
-
-	return queryResponse, err
+	err = json.Unmarshal(data, &response)
+	return response, err
 }
 
 // Deletes entity entries
 func (client *ApiAiClient) EntitiesDeleteEntriesRequest(eid string, values []string) (QueryResponse, error) {
-	var queryResponse QueryResponse
+	var response QueryResponse
+
+	if len(values) == 0 || eid == "" {
+		return response, errors.New("values and eid cannot be empty")
+	}
 
 	request := NewRequest(
 		client,
@@ -309,19 +337,21 @@ func (client *ApiAiClient) EntitiesDeleteEntriesRequest(eid string, values []str
 	)
 
 	data, err := request.Perform()
-
 	if err != nil {
-		return queryResponse, err
+		return response, err
 	}
 
-	err = json.Unmarshal(data, &queryResponse)
-
-	return queryResponse, err
+	err = json.Unmarshal(data, &response)
+	return response, err
 }
 
 // Adds one or multiple user entities for a session.
 func (client *ApiAiClient) UserEntitiesCreateRequest(userEntities []UserEntity) (QueryResponse, error) {
-	var queryResponse QueryResponse
+	var response QueryResponse
+
+	if reflect.DeepEqual(userEntities, []UserEntity{}) {
+		return response, errors.New("user entities cannot be empty")
+	}
 
 	request := NewRequest(
 		client,
@@ -339,19 +369,21 @@ func (client *ApiAiClient) UserEntitiesCreateRequest(userEntities []UserEntity) 
 	)
 
 	data, err := request.Perform()
-
 	if err != nil {
-		return queryResponse, err
+		return response, err
 	}
 
-	err = json.Unmarshal(data, &queryResponse)
-
-	return queryResponse, err
+	err = json.Unmarshal(data, &response)
+	return response, err
 }
 
 // Updates user entity specified by name
 func (client *ApiAiClient) UserEntitiesUpdateRequest(name string, userEntity UserEntity) (QueryResponse, error) {
-	var queryResponse QueryResponse
+	var response QueryResponse
+
+	if reflect.DeepEqual(userEntity, UserEntity{}) || name == "" {
+		return response, errors.New("user entity and name cannot be empty")
+	}
 
 	request := NewRequest(
 		client,
@@ -363,19 +395,21 @@ func (client *ApiAiClient) UserEntitiesUpdateRequest(name string, userEntity Use
 	)
 
 	data, err := request.Perform()
-
 	if err != nil {
-		return queryResponse, err
+		return response, err
 	}
 
-	err = json.Unmarshal(data, &queryResponse)
-
-	return queryResponse, err
+	err = json.Unmarshal(data, &response)
+	return response, err
 }
 
 // Gets a user entity object by name
 func (client *ApiAiClient) UserEntitiesFindByNameRequest(name string) (UserEntity, error) {
-	var userEntity UserEntity
+	var response UserEntity
+
+	if name == "" {
+		return response, errors.New("name cannot be empty")
+	}
 
 	request := NewRequest(
 		client,
@@ -387,19 +421,21 @@ func (client *ApiAiClient) UserEntitiesFindByNameRequest(name string) (UserEntit
 	)
 
 	data, err := request.Perform()
-
 	if err != nil {
-		return userEntity, err
+		return response, err
 	}
 
-	err = json.Unmarshal(data, &userEntity)
-
-	return userEntity, err
+	err = json.Unmarshal(data, &response)
+	return response, err
 }
 
 // Deletes a user entity object with a specified name
 func (client *ApiAiClient) UserEntitiesDeleteByNameRequest(name string) (QueryResponse, error) {
-	var queryResponse QueryResponse
+	var response QueryResponse
+
+	if name == "" {
+		return response, errors.New("name cannot be empty")
+	}
 
 	request := NewRequest(
 		client,
@@ -411,19 +447,17 @@ func (client *ApiAiClient) UserEntitiesDeleteByNameRequest(name string) (QueryRe
 	)
 
 	data, err := request.Perform()
-
 	if err != nil {
-		return queryResponse, err
+		return response, err
 	}
 
-	err = json.Unmarshal(data, &queryResponse)
-
-	return queryResponse, err
+	err = json.Unmarshal(data, &response)
+	return response, err
 }
 
 // Retrieves a list of all intents for the agent
 func (client *ApiAiClient) IntentsFindAllRequest() ([]IntentAgent, error) {
-	var intents []IntentAgent
+	var response []IntentAgent
 
 	request := NewRequest(
 		client,
@@ -435,19 +469,21 @@ func (client *ApiAiClient) IntentsFindAllRequest() ([]IntentAgent, error) {
 	)
 
 	data, err := request.Perform()
-
 	if err != nil {
-		return intents, err
+		return response, err
 	}
 
-	err = json.Unmarshal(data, &intents)
-
-	return intents, err
+	err = json.Unmarshal(data, &response)
+	return response, err
 }
 
 // Retrieves the specified intent
 func (client *ApiAiClient) IntentsFindByIdRequest(id string) (Intent, error) {
-	var intent Intent
+	var response Intent
+
+	if id == "" {
+		return response, errors.New("id cannot be empty")
+	}
 
 	request := NewRequest(
 		client,
@@ -459,19 +495,21 @@ func (client *ApiAiClient) IntentsFindByIdRequest(id string) (Intent, error) {
 	)
 
 	data, err := request.Perform()
-
 	if err != nil {
-		return intent, err
+		return response, err
 	}
 
-	err = json.Unmarshal(data, &intent)
-
-	return intent, err
+	err = json.Unmarshal(data, &response)
+	return response, err
 }
 
 // Creates a new intent
 func (client *ApiAiClient) IntentsCreateRequest(intent Intent) (QueryResponse, error) {
-	var queryResponse QueryResponse
+	var response QueryResponse
+
+	if reflect.DeepEqual(intent, Intent{}) {
+		return response, errors.New("intent cannot be empty")
+	}
 
 	request := NewRequest(
 		client,
@@ -483,19 +521,21 @@ func (client *ApiAiClient) IntentsCreateRequest(intent Intent) (QueryResponse, e
 	)
 
 	data, err := request.Perform()
-
 	if err != nil {
-		return queryResponse, err
+		return response, err
 	}
 
-	err = json.Unmarshal(data, &queryResponse)
-
-	return queryResponse, err
+	err = json.Unmarshal(data, &response)
+	return response, err
 }
 
 // Updates the specified intent
 func (client *ApiAiClient) IntentsUpdateRequest(id string, intent Intent) (QueryResponse, error) {
-	var queryResponse QueryResponse
+	var response QueryResponse
+
+	if reflect.DeepEqual(intent, Intent{}) || id == "" {
+		return response, errors.New("intent and id cannot be empty")
+	}
 
 	request := NewRequest(
 		client,
@@ -507,19 +547,21 @@ func (client *ApiAiClient) IntentsUpdateRequest(id string, intent Intent) (Query
 	)
 
 	data, err := request.Perform()
-
 	if err != nil {
-		return queryResponse, err
+		return response, err
 	}
 
-	err = json.Unmarshal(data, &queryResponse)
-
-	return queryResponse, err
+	err = json.Unmarshal(data, &response)
+	return response, err
 }
 
 // Deletes the specified intent
-func (client *ApiAiClient) IntentsDeleteRequest(id string, intent Intent) (QueryResponse, error) {
-	var queryResponse QueryResponse
+func (client *ApiAiClient) IntentsDeleteRequest(id string) (QueryResponse, error) {
+	var response QueryResponse
+
+	if id == "" {
+		return response, errors.New("id cannot be empty")
+	}
 
 	request := NewRequest(
 		client,
@@ -531,19 +573,17 @@ func (client *ApiAiClient) IntentsDeleteRequest(id string, intent Intent) (Query
 	)
 
 	data, err := request.Perform()
-
 	if err != nil {
-		return queryResponse, err
+		return response, err
 	}
 
-	err = json.Unmarshal(data, &queryResponse)
-
-	return queryResponse, err
+	err = json.Unmarshal(data, &response)
+	return response, err
 }
 
 // retrieves the list of all currently active contexts for the specified session
 func (client *ApiAiClient) ContextsFindAllRequest() ([]Context, error) {
-	var contexts []Context
+	var response []Context
 
 	request := NewRequest(
 		client,
@@ -555,19 +595,21 @@ func (client *ApiAiClient) ContextsFindAllRequest() ([]Context, error) {
 	)
 
 	data, err := request.Perform()
-
 	if err != nil {
-		return contexts, err
+		return response, err
 	}
 
-	err = json.Unmarshal(data, &contexts)
-
-	return contexts, err
+	err = json.Unmarshal(data, &response)
+	return response, err
 }
 
 // Retrieves the specified context for the specified session
 func (client *ApiAiClient) ContextsFindByNameRequest(name string) (Context, error) {
-	var contexts Context
+	var response Context
+
+	if name == "" {
+		return response, errors.New("name cannot be empty")
+	}
 
 	request := NewRequest(
 		client,
@@ -579,19 +621,21 @@ func (client *ApiAiClient) ContextsFindByNameRequest(name string) (Context, erro
 	)
 
 	data, err := request.Perform()
-
 	if err != nil {
-		return contexts, err
+		return response, err
 	}
 
-	err = json.Unmarshal(data, &contexts)
-
-	return contexts, err
+	err = json.Unmarshal(data, &response)
+	return response, err
 }
 
 // Adds new active contexts to the specified session
 func (client *ApiAiClient) ContextsCreateRequest(contexts []Context) (QueryResponse, error) {
-	var queryResponse QueryResponse
+	var response QueryResponse
+
+	if reflect.DeepEqual(contexts, []Context{}) {
+		return response, errors.New("contexts cannot be empty")
+	}
 
 	request := NewRequest(
 		client,
@@ -603,19 +647,17 @@ func (client *ApiAiClient) ContextsCreateRequest(contexts []Context) (QueryRespo
 	)
 
 	data, err := request.Perform()
-
 	if err != nil {
-		return queryResponse, err
+		return response, err
 	}
 
-	err = json.Unmarshal(data, &queryResponse)
-
-	return queryResponse, err
+	err = json.Unmarshal(data, &response)
+	return response, err
 }
 
 // Deletes all contexts from the specified session
 func (client *ApiAiClient) ContextsDeleteRequest() (QueryResponse, error) {
-	var queryResponse QueryResponse
+	var response QueryResponse
 
 	request := NewRequest(
 		client,
@@ -627,21 +669,21 @@ func (client *ApiAiClient) ContextsDeleteRequest() (QueryResponse, error) {
 	)
 
 	data, err := request.Perform()
-
-	fmt.Println(string(data))
-
 	if err != nil {
-		return queryResponse, err
+		return response, err
 	}
 
-	err = json.Unmarshal(data, &queryResponse)
-
-	return queryResponse, err
+	err = json.Unmarshal(data, &response)
+	return response, err
 }
 
 // Deletes the specified context from the specified session
 func (client *ApiAiClient) ContextsDeleteByNameRequest(name string) (QueryResponse, error) {
-	var queryResponse QueryResponse
+	var response QueryResponse
+
+	if name == "" {
+		return response, errors.New("name cannot be empty")
+	}
 
 	request := NewRequest(
 		client,
@@ -653,16 +695,12 @@ func (client *ApiAiClient) ContextsDeleteByNameRequest(name string) (QueryRespon
 	)
 
 	data, err := request.Perform()
-
-	fmt.Println(string(data))
-
 	if err != nil {
-		return queryResponse, err
+		return response, err
 	}
 
-	err = json.Unmarshal(data, &queryResponse)
-
-	return queryResponse, err
+	err = json.Unmarshal(data, &response)
+	return response, err
 }
 
 // GET API.AI access token
