@@ -58,15 +58,15 @@ func (client *ApiAiClient) QueryFindRequest(query Query) (QueryResponse, error) 
 		return response, errors.New("query cannot be empty")
 	}
 
-	if query.V != "" {
+	if query.V == "" {
 		query.V = client.GetApiVersion()
 	}
 
-	if query.Lang != "" {
+	if query.Lang == "" {
 		query.Lang = client.GetApiLang()
 	}
 
-	if query.SessionID != "" {
+	if query.SessionID == "" {
 		query.SessionID = client.GetSessionID()
 	}
 

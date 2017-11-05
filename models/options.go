@@ -29,6 +29,6 @@ var AVAILABLE_LANGUAGES = map[string]string{
 const (
 	VERSION             = "2.0.0-beta.20"
 	DEFAULT_BASE_URL    = "https://api.api.ai/v1/"
-	DEFAULT_API_VERSION = "20170801"
+	DEFAULT_API_VERSION = "20150910"
 	DEFAULT_CLIENT_LANG = "en"
 )

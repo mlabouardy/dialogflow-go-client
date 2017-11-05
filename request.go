@@ -57,13 +57,13 @@ func (r *Request) Perform() ([]byte, error) {
 	for key, value := range r.QueryParams {
 		query.Add(key, value)
 	}
+	req.URL.RawQuery = query.Encode()
 
 	if err != nil {
 		return data, err
 	}
 
 	resp, err := client.Do(req)
-
 	if err != nil {
 		return data, err
 	}

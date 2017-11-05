@@ -41,7 +41,7 @@ func (query Query) ToMap() map[string]string {
 		params["e"] = query.Event.Name
 	}
 
-	if !reflect.DeepEqual(query.Contexts, []Context{}) {
+	if !reflect.DeepEqual(query.Contexts, []Context{}) && len(query.Contexts) > 0 {
 		params["contexts"] = query.Contexts[0].Name
 	}
 

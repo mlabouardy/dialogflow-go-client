@@ -10,7 +10,7 @@ import (
 
 func main() {
 	err, client := NewApiAiClient(Options{
-		AccessToken: "<API.AI TOKEN GOES HERE>",
+		AccessToken: "0b8c9af465a141fc9949fb8e87f0fa1a",
 	})
 	if err != nil {
 		log.Fatal(err)
