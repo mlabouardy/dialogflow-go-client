@@ -4,13 +4,13 @@ import (
 	"fmt"
 	"log"
 
-	. "github.com/mlabouardy/apiai-go-client"
-	. "github.com/mlabouardy/apiai-go-client/models"
+	. "github.com/mlabouardy/dialogflow-go-client"
+	. "github.com/mlabouardy/dialogflow-go-client/models"
 )
 
 func main() {
-	err, client := NewApiAiClient(Options{
-		AccessToken: "09dfd6d33dec4368acbea8021f13b0c5",
+	err, client := NewDialogFlowClient(Options{
+		AccessToken: "<API.AI TOKEN GOES HERE>",
 	})
 	if err != nil {
 		log.Fatal(err)

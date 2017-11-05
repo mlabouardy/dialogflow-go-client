@@ -1,15 +1,15 @@
-package apiai
+package dialogflow
 
 import (
 	"encoding/json"
 	"errors"
 	"reflect"
 
-	. "github.com/mlabouardy/apiai-go-client/models"
+	. "github.com/mlabouardy/dialogflow-go-client/models"
 	uuid "github.com/satori/go.uuid"
 )
 
-type ApiAiClient struct {
+type DialogFlowClient struct {
 	accessToken string
 	apiLang     string
 	apiVersion  string
@@ -18,12 +18,12 @@ type ApiAiClient struct {
 }
 
 // Create API.AI instance
-func NewApiAiClient(options Options) (error, *ApiAiClient) {
+func NewDialogFlowClient(options Options) (error, *DialogFlowClient) {
 	if (reflect.DeepEqual(options, Options{}) || options.AccessToken == "") {
 		return errors.New("Access token is required for new ApiAiClient instance"), nil
 	}
 
-	client := &ApiAiClient{
+	client := &DialogFlowClient{
 		accessToken: options.AccessToken,
 	}
 
@@ -51,7 +51,7 @@ func NewApiAiClient(options Options) (error, *ApiAiClient) {
 }
 
 // Takes natural language text and information as query parameters and returns information as JSON
-func (client *ApiAiClient) QueryFindRequest(query Query) (QueryResponse, error) {
+func (client *DialogFlowClient) QueryFindRequest(query Query) (QueryResponse, error) {
 	var response QueryResponse
 
 	if reflect.DeepEqual(query, Query{}) {
@@ -90,7 +90,7 @@ func (client *ApiAiClient) QueryFindRequest(query Query) (QueryResponse, error) 
 }
 
 // Takes natural language text and information as JSON in the POST body and returns information as JSON
-func (client *ApiAiClient) QueryCreateRequest(query Query) (QueryResponse, error) {
+func (client *DialogFlowClient) QueryCreateRequest(query Query) (QueryResponse, error) {
 	var response QueryResponse
 
 	if reflect.DeepEqual(query, Query{}) {
@@ -116,7 +116,7 @@ func (client *ApiAiClient) QueryCreateRequest(query Query) (QueryResponse, error
 }
 
 // Retrieves a list of all entities for the agent
-func (client *ApiAiClient) EntitiesFindAllRequest() ([]Entity, error) {
+func (client *DialogFlowClient) EntitiesFindAllRequest() ([]Entity, error) {
 	var response []Entity
 
 	request := NewRequest(
@@ -138,7 +138,7 @@ func (client *ApiAiClient) EntitiesFindAllRequest() ([]Entity, error) {
 }
 
 // Retrieves the specified entity
-func (client *ApiAiClient) EntitiesFindByIdRequest(eid string) (Entity, error) {
+func (client *DialogFlowClient) EntitiesFindByIdRequest(eid string) (Entity, error) {
 	var response Entity
 
 	if eid == "" {
@@ -164,7 +164,7 @@ func (client *ApiAiClient) EntitiesFindByIdRequest(eid string) (Entity, error) {
 }
 
 // Creates a new entity
-func (client *ApiAiClient) EntitiesCreateRequest(entity Entity) (QueryResponse, error) {
+func (client *DialogFlowClient) EntitiesCreateRequest(entity Entity) (QueryResponse, error) {
 	var response QueryResponse
 
 	if reflect.DeepEqual(entity, Entity{}) {
@@ -190,7 +190,7 @@ func (client *ApiAiClient) EntitiesCreateRequest(entity Entity) (QueryResponse, 
 }
 
 // Adds entries to the specified entity.
-func (client *ApiAiClient) EntitiesAddEntryRequest(eid string, entries []Entry) (QueryResponse, error) {
+func (client *DialogFlowClient) EntitiesAddEntryRequest(eid string, entries []Entry) (QueryResponse, error) {
 	var response QueryResponse
 
 	if reflect.DeepEqual(entries, []Entry{}) || eid == "" {
@@ -216,7 +216,7 @@ func (client *ApiAiClient) EntitiesAddEntryRequest(eid string, entries []Entry) 
 }
 
 // Creates or updates an array of entities
-func (client *ApiAiClient) EntitiesUpdateRequest(entities []Entity) (QueryResponse, error) {
+func (client *DialogFlowClient) EntitiesUpdateRequest(entities []Entity) (QueryResponse, error) {
 	var response QueryResponse
 
 	if reflect.DeepEqual(entities, []Entity{}) {
@@ -242,7 +242,7 @@ func (client *ApiAiClient) EntitiesUpdateRequest(entities []Entity) (QueryRespon
 }
 
 // Updates the specified entity
-func (client *ApiAiClient) EntitiesUpdateEntityRequest(eid string, entity Entity) (QueryResponse, error) {
+func (client *DialogFlowClient) EntitiesUpdateEntityRequest(eid string, entity Entity) (QueryResponse, error) {
 	var response QueryResponse
 
 	if reflect.DeepEqual(entity, Entity{}) || eid == "" {
@@ -268,7 +268,7 @@ func (client *ApiAiClient) EntitiesUpdateEntityRequest(eid string, entity Entity
 }
 
 // Updates entity entries
-func (client *ApiAiClient) EntitiesUpdateEntityEntriesRequest(eid string, entries []Entry) (QueryResponse, error) {
+func (client *DialogFlowClient) EntitiesUpdateEntityEntriesRequest(eid string, entries []Entry) (QueryResponse, error) {
 	var response QueryResponse
 
 	if reflect.DeepEqual(entries, Entry{}) || eid == "" {
@@ -294,7 +294,7 @@ func (client *ApiAiClient) EntitiesUpdateEntityEntriesRequest(eid string, entrie
 }
 
 // Deletes the specified entity
-func (client *ApiAiClient) EntitiesDeleteRequest(eid string) (QueryResponse, error) {
+func (client *DialogFlowClient) EntitiesDeleteRequest(eid string) (QueryResponse, error) {
 	var response QueryResponse
 
 	if eid == "" {
@@ -320,7 +320,7 @@ func (client *ApiAiClient) EntitiesDeleteRequest(eid string) (QueryResponse, err
 }
 
 // Deletes entity entries
-func (client *ApiAiClient) EntitiesDeleteEntriesRequest(eid string, values []string) (QueryResponse, error) {
+func (client *DialogFlowClient) EntitiesDeleteEntriesRequest(eid string, values []string) (QueryResponse, error) {
 	var response QueryResponse
 
 	if len(values) == 0 || eid == "" {
@@ -346,7 +346,7 @@ func (client *ApiAiClient) EntitiesDeleteEntriesRequest(eid string, values []str
 }
 
 // Adds one or multiple user entities for a session.
-func (client *ApiAiClient) UserEntitiesCreateRequest(userEntities []UserEntity) (QueryResponse, error) {
+func (client *DialogFlowClient) UserEntitiesCreateRequest(userEntities []UserEntity) (QueryResponse, error) {
 	var response QueryResponse
 
 	if reflect.DeepEqual(userEntities, []UserEntity{}) {
@@ -378,7 +378,7 @@ func (client *ApiAiClient) UserEntitiesCreateRequest(userEntities []UserEntity) 
 }
 
 // Updates user entity specified by name
-func (client *ApiAiClient) UserEntitiesUpdateRequest(name string, userEntity UserEntity) (QueryResponse, error) {
+func (client *DialogFlowClient) UserEntitiesUpdateRequest(name string, userEntity UserEntity) (QueryResponse, error) {
 	var response QueryResponse
 
 	if reflect.DeepEqual(userEntity, UserEntity{}) || name == "" {
@@ -404,7 +404,7 @@ func (client *ApiAiClient) UserEntitiesUpdateRequest(name string, userEntity Use
 }
 
 // Gets a user entity object by name
-func (client *ApiAiClient) UserEntitiesFindByNameRequest(name string) (UserEntity, error) {
+func (client *DialogFlowClient) UserEntitiesFindByNameRequest(name string) (UserEntity, error) {
 	var response UserEntity
 
 	if name == "" {
@@ -430,7 +430,7 @@ func (client *ApiAiClient) UserEntitiesFindByNameRequest(name string) (UserEntit
 }
 
 // Deletes a user entity object with a specified name
-func (client *ApiAiClient) UserEntitiesDeleteByNameRequest(name string) (QueryResponse, error) {
+func (client *DialogFlowClient) UserEntitiesDeleteByNameRequest(name string) (QueryResponse, error) {
 	var response QueryResponse
 
 	if name == "" {
@@ -456,7 +456,7 @@ func (client *ApiAiClient) UserEntitiesDeleteByNameRequest(name string) (QueryRe
 }
 
 // Retrieves a list of all intents for the agent
-func (client *ApiAiClient) IntentsFindAllRequest() ([]IntentAgent, error) {
+func (client *DialogFlowClient) IntentsFindAllRequest() ([]IntentAgent, error) {
 	var response []IntentAgent
 
 	request := NewRequest(
@@ -478,7 +478,7 @@ func (client *ApiAiClient) IntentsFindAllRequest() ([]IntentAgent, error) {
 }
 
 // Retrieves the specified intent
-func (client *ApiAiClient) IntentsFindByIdRequest(id string) (Intent, error) {
+func (client *DialogFlowClient) IntentsFindByIdRequest(id string) (Intent, error) {
 	var response Intent
 
 	if id == "" {
@@ -504,7 +504,7 @@ func (client *ApiAiClient) IntentsFindByIdRequest(id string) (Intent, error) {
 }
 
 // Creates a new intent
-func (client *ApiAiClient) IntentsCreateRequest(intent Intent) (QueryResponse, error) {
+func (client *DialogFlowClient) IntentsCreateRequest(intent Intent) (QueryResponse, error) {
 	var response QueryResponse
 
 	if reflect.DeepEqual(intent, Intent{}) {
@@ -530,7 +530,7 @@ func (client *ApiAiClient) IntentsCreateRequest(intent Intent) (QueryResponse, e
 }
 
 // Updates the specified intent
-func (client *ApiAiClient) IntentsUpdateRequest(id string, intent Intent) (QueryResponse, error) {
+func (client *DialogFlowClient) IntentsUpdateRequest(id string, intent Intent) (QueryResponse, error) {
 	var response QueryResponse
 
 	if reflect.DeepEqual(intent, Intent{}) || id == "" {
@@ -556,7 +556,7 @@ func (client *ApiAiClient) IntentsUpdateRequest(id string, intent Intent) (Query
 }
 
 // Deletes the specified intent
-func (client *ApiAiClient) IntentsDeleteRequest(id string) (QueryResponse, error) {
+func (client *DialogFlowClient) IntentsDeleteRequest(id string) (QueryResponse, error) {
 	var response QueryResponse
 
 	if id == "" {
@@ -582,7 +582,7 @@ func (client *ApiAiClient) IntentsDeleteRequest(id string) (QueryResponse, error
 }
 
 // retrieves the list of all currently active contexts for the specified session
-func (client *ApiAiClient) ContextsFindAllRequest() ([]Context, error) {
+func (client *DialogFlowClient) ContextsFindAllRequest() ([]Context, error) {
 	var response []Context
 
 	request := NewRequest(
@@ -604,7 +604,7 @@ func (client *ApiAiClient) ContextsFindAllRequest() ([]Context, error) {
 }
 
 // Retrieves the specified context for the specified session
-func (client *ApiAiClient) ContextsFindByNameRequest(name string) (Context, error) {
+func (client *DialogFlowClient) ContextsFindByNameRequest(name string) (Context, error) {
 	var response Context
 
 	if name == "" {
@@ -630,7 +630,7 @@ func (client *ApiAiClient) ContextsFindByNameRequest(name string) (Context, erro
 }
 
 // Adds new active contexts to the specified session
-func (client *ApiAiClient) ContextsCreateRequest(contexts []Context) (QueryResponse, error) {
+func (client *DialogFlowClient) ContextsCreateRequest(contexts []Context) (QueryResponse, error) {
 	var response QueryResponse
 
 	if reflect.DeepEqual(contexts, []Context{}) {
@@ -656,7 +656,7 @@ func (client *ApiAiClient) ContextsCreateRequest(contexts []Context) (QueryRespo
 }
 
 // Deletes all contexts from the specified session
-func (client *ApiAiClient) ContextsDeleteRequest() (QueryResponse, error) {
+func (client *DialogFlowClient) ContextsDeleteRequest() (QueryResponse, error) {
 	var response QueryResponse
 
 	request := NewRequest(
@@ -678,7 +678,7 @@ func (client *ApiAiClient) ContextsDeleteRequest() (QueryResponse, error) {
 }
 
 // Deletes the specified context from the specified session
-func (client *ApiAiClient) ContextsDeleteByNameRequest(name string) (QueryResponse, error) {
+func (client *DialogFlowClient) ContextsDeleteByNameRequest(name string) (QueryResponse, error) {
 	var response QueryResponse
 
 	if name == "" {
@@ -704,12 +704,12 @@ func (client *ApiAiClient) ContextsDeleteByNameRequest(name string) (QueryRespon
 }
 
 // GET API.AI access token
-func (client *ApiAiClient) GetAccessToken() string {
+func (client *DialogFlowClient) GetAccessToken() string {
 	return client.accessToken
 }
 
 // GET API.AI version
-func (client *ApiAiClient) GetApiVersion() string {
+func (client *DialogFlowClient) GetApiVersion() string {
 	if client.apiVersion != "" {
 		return client.apiVersion
 	}
@@ -717,7 +717,7 @@ func (client *ApiAiClient) GetApiVersion() string {
 }
 
 // GET API.AI language
-func (client *ApiAiClient) GetApiLang() string {
+func (client *DialogFlowClient) GetApiLang() string {
 	if client.apiLang != "" {
 		return client.apiLang
 	}
@@ -725,7 +725,7 @@ func (client *ApiAiClient) GetApiLang() string {
 }
 
 // Get API.AI base url
-func (client *ApiAiClient) GetBaseUrl() string {
+func (client *DialogFlowClient) GetBaseUrl() string {
 	if client.apiBaseUrl != "" {
 		return client.apiBaseUrl
 	}
@@ -733,11 +733,11 @@ func (client *ApiAiClient) GetBaseUrl() string {
 }
 
 // Get current session ID
-func (client *ApiAiClient) GetSessionID() string {
+func (client *DialogFlowClient) GetSessionID() string {
 	return client.sessionID
 }
 
 // Set a new seesion ID
-func (client *ApiAiClient) SetSessionID(sessionID string) {
+func (client *DialogFlowClient) SetSessionID(sessionID string) {
 	client.sessionID = sessionID
 }

@@ -1,8 +1,8 @@
-# apiai-go-client
+# dialogflow-go-client
 
 [![CircleCI](https://circleci.com/gh/mlabouardy/apiai-go-client.svg?style=svg&circle-token=1f1f702ba1cb3cb0ee1385992d5fdf2dba02ea3f)](https://circleci.com/gh/mlabouardy/apiai-go-client) [![License](https://img.shields.io/badge/License-Apache%202.0-yellowgreen.svg)](https://opensource.org/licenses/Apache-2.0) [![Go Report Card](https://goreportcard.com/badge/github.com/mlabouardy/apiai-go-client)](https://goreportcard.com/report/github.com/mlabouardy/apiai-go-client)
 
-This library allows integrating agents from the [Api.ai](http://api.ai) natural language processing service with your Golang application.
+This library allows integrating agents from the [DialogFlow](https://dialogflow.com) natural language processing service with your Golang application.
 
 * [Prerequsites](#prerequsites)
 * [Installation](#installation)
@@ -12,13 +12,14 @@ This library allows integrating agents from the [Api.ai](http://api.ai) natural 
 
 # Prerequsites
 
-Create an [API.AI account](http://api.ai).
+Create an [DialogFlow account](https://dialogflow.com/).
 
 # Installation
 
 ```shell
-go get github.com/mlabouardy/apiai-go-client
+go get github.com/mlabouardy/dialogflow-go-client
 ```
+
 # Features
 
 * Queries
@@ -35,13 +36,13 @@ package main
 
 import (
 	"fmt"
-	"github.com/mlabouardy/apiai-go-client"
-	"github.com/mlabouardy/apiai-go-client/models"
+	"github.com/mlabouardy/dialogflow-go-client"
+	"github.com/mlabouardy/dialogflow-go-client/models"
 	"log"
 )
 
 func main() {
-	err, client := NewApiAiClient(Options{
+	err, client := NewDialogFlowClient(Options{
 		AccessToken: "<API.AI TOKEN GOES HERE>",
 	})
 	if err != nil {
@@ -65,4 +66,4 @@ go run main.go
 
 # Documentation
 
-Documentation is available at http://api.ai.
+Documentation is available at https://dialogflow.com/docs.

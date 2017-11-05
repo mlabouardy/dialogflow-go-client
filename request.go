@@ -1,4 +1,4 @@
-package apiai
+package dialogflow
 
 import (
 	"bytes"
@@ -6,7 +6,7 @@ import (
 	"io/ioutil"
 	"net/http"
 
-	. "github.com/mlabouardy/apiai-go-client/models"
+	. "github.com/mlabouardy/dialogflow-go-client/models"
 )
 
 type Request struct {
@@ -18,7 +18,7 @@ type Request struct {
 }
 
 // Initialize a new HTTP request
-func NewRequest(client *ApiAiClient, overridedRequestOptions RequestOptions) *Request {
+func NewRequest(client *DialogFlowClient, overridedRequestOptions RequestOptions) *Request {
 	headers := map[string]string{
 		"Authorization": "Bearer " + client.GetAccessToken(),
 		"Content-Type":  "application/json",
