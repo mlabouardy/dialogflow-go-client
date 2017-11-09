@@ -3,7 +3,7 @@
 [![CircleCI](https://circleci.com/gh/mlabouardy/dialogflow-go-client.svg?style=svg)](https://circleci.com/gh/mlabouardy/dialogflow-go-client) [![License](https://img.shields.io/badge/License-Apache%202.0-yellowgreen.svg)](https://opensource.org/licenses/Apache-2.0) [![Go Report Card](https://goreportcard.com/badge/github.com/mlabouardy/apiai-go-client)](https://goreportcard.com/report/github.com/mlabouardy/apiai-go-client)
 
 <div align="center">
-	<img src="logo.png" width="70%"/>
+	<img src="logo.png" width="50%"/>
 </div>
 
 This library allows integrating agents from the [DialogFlow](https://dialogflow.com) natural language processing service with your Golang application.
