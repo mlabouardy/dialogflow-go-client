@@ -70,7 +70,7 @@ go run main.go
 
 # Tutorials
 
-* [Bot in Messenger with DialogFlow & Golang](http://www.blog.labouardy.com/bot-in-messenger-with-dialogflow-golang/)
+* [Messenger Bot with DialogFlow & Golang](http://www.blog.labouardy.com/bot-in-messenger-with-dialogflow-golang/)
 
 # Documentation
 
