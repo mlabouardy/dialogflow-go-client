@@ -12,15 +12,15 @@ type QueryResponse struct {
 }
 
 type Result struct {
-	Source           string            `json:"source,omitempty"`
-	Action           string            `json:"action,omitempty"`
-	ResolvedQuery    string            `json:"resolvedQuery,omitempty"`
-	ActionIncomplete bool              `json:"actionIncomplete,omitempty"`
-	Parameters       map[string]string `json:"parameters,omitempty"`
-	Contexts         []Context         `json:"contexts,omitempty"`
-	Metadata         Metadata          `json:"metadata,omitempty"`
-	Fulfillment      Fulfillment       `json:"fulfillment,omitempty"`
-	Score            float32           `json:"score,omitempty"`
+	Source           string              `json:"source,omitempty"`
+	Action           string              `json:"action,omitempty"`
+	ResolvedQuery    string              `json:"resolvedQuery,omitempty"`
+	ActionIncomplete bool                `json:"actionIncomplete,omitempty"`
+	Parameters       map[string][]string `json:"parameters,omitempty"`
+	Contexts         []Context           `json:"contexts,omitempty"`
+	Metadata         Metadata            `json:"metadata,omitempty"`
+	Fulfillment      Fulfillment         `json:"fulfillment,omitempty"`
+	Score            float32             `json:"score,omitempty"`
 }
 
 type Fulfillment struct {
