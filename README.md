@@ -35,13 +35,14 @@ go get github.com/mlabouardy/dialogflow-go-client
 # Usage
 
 * Create `main.go` file with the following code:
+
 ```golang
 package main
 
 import (
 	"fmt"
-	"github.com/mlabouardy/dialogflow-go-client"
-	"github.com/mlabouardy/dialogflow-go-client/models"
+	. "github.com/mlabouardy/dialogflow-go-client"
+	. "github.com/mlabouardy/dialogflow-go-client/models"
 	"log"
 )
 
