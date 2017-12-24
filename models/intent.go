@@ -23,17 +23,18 @@ type CortanaCommand struct {
 
 type UserSay struct {
 	ID         string `json:"userSays,omitempty"`
-	Data       Data   `json:"data,omitempty"`
+	Data       []Data `json:"data,omitempty"`
 	IsTemplate bool   `json:"isTemplate,omitempty"`
 	Count      int    `json:"count,omitempty"`
 }
 
 type Response struct {
-	Action           string      `json:"action,omitempty"`
-	ResetContexts    bool        `json:"resetContexts,omitempty"`
-	AffectedContexts []Context   `json:"affectedContexts,omitempty"`
-	Parameters       []Parameter `json:"parameters,omitempty"`
-	Messages         []Message   `json:"message,omitempty"`
+	Action                   string          `json:"action,omitempty"`
+	ResetContexts            bool            `json:"resetContexts,omitempty"`
+	AffectedContexts         []Context       `json:"affectedContexts,omitempty"`
+	Parameters               []Parameter     `json:"parameters,omitempty"`
+	Messages                 []Message       `json:"message,omitempty"`
+	DefaultResponsePlatforms map[string]bool `json:"defaultResponsePlatforms,omitempty"`
 }
 
 type Data struct {

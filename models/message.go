@@ -1,6 +1,7 @@
 package models
 
 type Message struct {
-	Type   int    `json:"type,omitempty"`
-	Speech string `json:"speech,omitempty"`
+	Type     string `json:"type,omitempty"`
+	Speech   string `json:"textToSpeech,omitempty"`
+	Platform string `json:"platform,omitempty"`
 }
