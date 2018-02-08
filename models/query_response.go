@@ -16,7 +16,7 @@ type Result struct {
 	Action           string              `json:"action,omitempty"`
 	ResolvedQuery    string              `json:"resolvedQuery,omitempty"`
 	ActionIncomplete bool                `json:"actionIncomplete,omitempty"`
-	Parameters       map[string][]string `json:"parameters,omitempty"`
+	Parameters       map[string]interface{} `json:"parameters,omitempty"`
 	Contexts         []Context           `json:"contexts,omitempty"`
 	Metadata         Metadata            `json:"metadata,omitempty"`
 	Fulfillment      Fulfillment         `json:"fulfillment,omitempty"`
