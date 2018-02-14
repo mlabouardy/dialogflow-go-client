@@ -3,6 +3,7 @@ package models
 import (
 	"fmt"
 	"reflect"
+	"strconv"
 )
 
 type Query struct {
@@ -53,6 +54,7 @@ func (query Query) ToMap() map[string]string {
 	params["v"] = query.V
 	params["sessionId"] = query.SessionID
 	params["lang"] = query.Lang
+	params["resetContexts"] = strconv.FormatBool(query.ResetContexts)
 
 	return params
 }
